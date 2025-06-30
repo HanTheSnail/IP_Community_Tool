@@ -40,11 +40,11 @@ def process_data(df):
     # Create a copy to avoid modifying original
     df_processed = df.copy()
     
-    # Map country codes to names (assuming column D has codes, column E has names)
-    df_processed['mapped_country_name'] = df_processed.iloc[:, 3].apply(get_country_name_from_code)  # Column D (index 3)
+    # Map country codes to names (column F has codes, column G has names)
+    df_processed['mapped_country_name'] = df_processed.iloc[:, 5].apply(get_country_name_from_code)  # Column F (index 5)
     
-    # Get the actual country names from column E (index 4)
-    actual_countries = df_processed.iloc[:, 4].astype(str).str.strip()  # Column E
+    # Get the actual country names from column G (index 6)
+    actual_countries = df_processed.iloc[:, 6].astype(str).str.strip()  # Column G
     mapped_countries = df_processed['mapped_country_name'].astype(str).str.strip()
     
     # Find mismatches (where mapped country name doesn't match actual country name)
@@ -69,7 +69,7 @@ def main():
     uploaded_file = st.file_uploader(
         "Choose a CSV file", 
         type="csv",
-        help="Upload your CSV file with country codes in column D and country names in column E"
+        help="Upload your CSV file with country codes in column F and country names in column G"
     )
     
     if uploaded_file is not None:
@@ -87,9 +87,9 @@ def main():
             st.write("**Column Structure:**")
             col1, col2 = st.columns(2)
             with col1:
-                st.write(f"• Column D (Country Codes): `{df.columns[3] if len(df.columns) > 3 else 'N/A'}`")
+                st.write(f"• Column F (Country Codes): `{df.columns[5] if len(df.columns) > 5 else 'N/A'}`")
             with col2:
-                st.write(f"• Column E (Country Names): `{df.columns[4] if len(df.columns) > 4 else 'N/A'}`")
+                st.write(f"• Column G (Country Names): `{df.columns[6] if len(df.columns) > 6 else 'N/A'}`")
             
             # Process button
             if st.button("🔍 Check for Location Discrepancies", type="primary"):
@@ -123,8 +123,8 @@ def main():
                     # Show some examples of mismatches
                     st.markdown("### 📊 Example Mismatches")
                     for idx, row in suspect_df.head(3).iterrows():
-                        country_code = row.iloc[3] if len(row) > 3 else 'N/A'
-                        country_name = row.iloc[4] if len(row) > 4 else 'N/A'
+                        country_code = row.iloc[5] if len(row) > 5 else 'N/A'  # Column F
+                        country_name = row.iloc[6] if len(row) > 6 else 'N/A'  # Column G
                         mapped_name = get_country_name_from_code(country_code)
                         
                         st.write(f"• **{country_code}** (maps to: {mapped_name}) vs **{country_name}** ❌")
@@ -135,7 +135,7 @@ def main():
         
         except Exception as e:
             st.error(f"❌ Error processing file: {str(e)}")
-            st.info("Please make sure your CSV has the correct format with country codes in column D and country names in column E")
+            st.info("Please make sure your CSV has the correct format with country codes in column F and country names in column G")
     
     else:
         st.info("👆 Please upload a CSV file to get started")
@@ -146,8 +146,10 @@ def main():
             'Column A': ['Data 1', 'Data 2', 'Data 3'],
             'Column B': ['Data 1', 'Data 2', 'Data 3'], 
             'Column C': ['Data 1', 'Data 2', 'Data 3'],
-            'Country Code (D)': ['FR', 'GB', 'SI'],
-            'Country Name (E)': ['France', 'United Kingdom', 'United Arab Emirates']
+            'Column D': ['Data 1', 'Data 2', 'Data 3'],
+            'Column E': ['Data 1', 'Data 2', 'Data 3'],
+            'Country Code (F)': ['FR', 'GB', 'SI'],
+            'Country Name (G)': ['France', 'United Kingdom', 'United Arab Emirates']
         }
         example_df = pd.DataFrame(example_data)
         st.dataframe(example_df)
